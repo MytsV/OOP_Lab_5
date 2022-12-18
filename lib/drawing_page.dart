@@ -37,9 +37,11 @@ class _DrawingPageState extends State<DrawingPage> {
         imagePath: 'assets/ellipse.png',
         editor: EllipseEditor()),
     Instrument(
-        name: 'Лінія з двома еліпсами',
+        name: 'О-лінія-О',
         imagePath: 'assets/ellipse.png',
         editor: OLineOEditor()),
+    Instrument(
+        name: 'Куб', imagePath: 'assets/ellipse.png', editor: CubeEditor()),
   ];
 
   void _onMenuItemSelected(Editor value) {
@@ -86,18 +88,8 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   String _getAppBarText() {
-    switch (_currentEditor.runtimeType) {
-      case PointEditor:
-        return 'Крапка';
-      case LineEditor:
-        return 'Лінія';
-      case RectangleEditor:
-        return 'Прямокутник';
-      case EllipseEditor:
-        return 'Еліпс';
-      default:
-        return '';
-    }
+    Instrument instrument = instruments.firstWhere((element) => element.editor.runtimeType == _currentEditor.runtimeType);
+    return instrument.name;
   }
 
   Widget _getToolbarButton(Instrument instrument) {

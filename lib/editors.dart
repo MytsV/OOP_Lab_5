@@ -244,5 +244,52 @@ class OLineOEditor extends Editor {
     }
     _oldShape = null;
   }
-  
+}
+
+class CubeEditor extends Editor {
+  Paint get _defaultPaint {
+    Paint paint = Paint();
+    paint.color = ELLIPSE_FILL;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
+    return paint;
+  }
+
+  Paint get _shadowPaint {
+    Paint paint = Paint();
+    paint.color = SHADOW_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.style = PaintingStyle.stroke;
+    return paint;
+  }
+
+  Offset? _startPosition;
+  CubeShape? _oldShape;
+
+  @override
+  void onPanDown(DragDownDetails details) {
+    _startPosition = details.localPosition;
+  }
+
+  @override
+  void onPanUpdate(DragUpdateDetails details) {
+    CubeShape shape = CubeShape(_startPosition!, details.localPosition);
+    if (_oldShape != null) {
+      shapes.remove(_oldShape!);
+    }
+    _oldShape = shape;
+    shape.paint = _shadowPaint;
+    shape.type = ShapeType.shadowed;
+    shapes.add(shape);
+  }
+
+  @override
+  void onPanEnd(DragEndDetails details) {
+    if (_oldShape != null) {
+      _oldShape!.paint = _defaultPaint;
+      _oldShape!.type = ShapeType.regular;
+      shapes.remove(_oldShape!);
+      shapes.add(_oldShape!);
+    }
+    _oldShape = null;
+  }
 }

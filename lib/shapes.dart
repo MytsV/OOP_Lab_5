@@ -189,7 +189,16 @@ class CubeShape extends Shape with LineMixin, RectangleMixin {
   @override
   void show(Canvas canvas) {
     //У нас вводиться головна діагональ куба
-
+    double dx = end.dx - start.dx;
+    double dy = end.dy - start.dy;
+    double diagonalLength = sqrt(dx * dx + dy * dy);
+    double side = diagonalLength / sqrt(3);
+    showRectangle(canvas, Offset(start.dx + side / 2, start.dy + side / 2), start);
+    showRectangle(canvas, Offset(end.dx - side / 2, end.dy - side / 2), end);
+    showLine(canvas, start, Offset(end.dx - side, end.dy - side));
+    showLine(canvas, Offset(start.dx + side, start.dy), Offset(end.dx, end.dy - side));
+    showLine(canvas, Offset(start.dx, start.dy + side), Offset(end.dx - side, end.dy));
+    showLine(canvas, Offset(start.dx + side, start.dy + side), end);
   }
 
 }
