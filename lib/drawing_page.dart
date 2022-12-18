@@ -6,6 +6,15 @@ import 'shape_painter.dart';
 import 'shapes.dart';
 import 'variant_values.dart';
 
+class Instrument {
+  final String name;
+  final String imagePath;
+  final Editor editor;
+
+  Instrument(
+      {required this.name, required this.imagePath, required this.editor});
+}
+
 class DrawingPage extends StatefulWidget {
   const DrawingPage({Key? key}) : super(key: key);
 
@@ -15,6 +24,20 @@ class DrawingPage extends StatefulWidget {
 
 class _DrawingPageState extends State<DrawingPage> {
   Editor _currentEditor = PointEditor();
+  final instruments = [
+    Instrument(
+        name: 'Крапка', imagePath: 'assets/dot.png', editor: PointEditor()),
+    Instrument(
+        name: 'Лінія', imagePath: 'assets/line.png', editor: LineEditor()),
+    Instrument(
+        name: 'Прямокутник',
+        imagePath: 'assets/rectangle.png',
+        editor: RectangleEditor()),
+    Instrument(
+        name: 'Еліпс',
+        imagePath: 'assets/ellipse.png',
+        editor: EllipseEditor()),
+  ];
 
   void _onMenuItemSelected(Editor value) {
     setState(() {
@@ -22,7 +45,7 @@ class _DrawingPageState extends State<DrawingPage> {
     });
   }
 
-  _getButtonChild(String text) => Text(text);
+  _getButtonChild(Instrument instrument) => Text(instrument.name);
 
   Widget _getMenuChild() {
     return IntrinsicWidth(
@@ -42,24 +65,10 @@ class _DrawingPageState extends State<DrawingPage> {
   Widget _getMenuButton() => PopupMenuButton(
         child: _getMenuChild(),
         itemBuilder: (context) {
-          return [
-            PopupMenuItem<Editor>(
-              value: PointEditor(),
-              child: _getButtonChild('Крапка'),
-            ),
-            PopupMenuItem<Editor>(
-              value: LineEditor(),
-              child: _getButtonChild('Лінія'),
-            ),
-            PopupMenuItem<Editor>(
-              value: RectangleEditor(),
-              child: _getButtonChild('Прямокутник'),
-            ),
-            PopupMenuItem<Editor>(
-              value: EllipseEditor(),
-              child: _getButtonChild('Еліпс'),
-            ),
-          ];
+          return instruments
+              .map((e) => PopupMenuItem<Editor>(
+                  value: e.editor, child: _getButtonChild(e)))
+              .toList();
         },
         onSelected: _onMenuItemSelected,
       );
@@ -74,7 +83,6 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   String _getAppBarText() {
-    String text;
     switch(_currentEditor.runtimeType) {
       case PointEditor:
         return 'Крапка';
@@ -89,13 +97,44 @@ class _DrawingPageState extends State<DrawingPage> {
     }
   }
 
+  Widget _getToolbarButton(Instrument instrument) {
+    bool isSelected = instrument.editor.runtimeType == _currentEditor.runtimeType;
+    return Tooltip(
+      message: instrument.name,
+      child: GestureDetector(
+          onTap: () => _onMenuItemSelected(instrument.editor),
+          child: Container(
+            width: 40,
+            height: 40,
+            color: Colors.indigo[200],
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Image.asset(
+                instrument.imagePath,
+                color: isSelected ? Colors.indigo[900] : Colors.white,
+                filterQuality: FilterQuality.none,
+              ),
+            ),
+          )),
+    );
+  }
+
+  PreferredSizeWidget _getToolbar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(40),
+      child: Row(
+        children: instruments.map((e) => _getToolbarButton(e)).toList()
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getAppBarText()),
-        actions: [_getMenuButton()],
-      ),
+          title: Text(_getAppBarText()),
+          actions: [_getMenuButton()],
+          bottom: _getToolbar()),
       body: Padding(
         //Робимо відступ між краями екрану й полем малювання
         padding: const EdgeInsets.all(30.0),
