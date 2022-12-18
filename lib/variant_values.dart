@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-const BASE_COLOR = Colors.deepOrange;
-const SHADOW_COLOR = Colors.black;
+const BASE_COLOR = Colors.black;
+const RECTANGLE_FILL = Colors.grey;
+const SHADOW_COLOR = Colors.red;
 const STROKE_COLOR = Colors.black;
-const ELLIPSE_FILL = Colors.white;
+const ELLIPSE_FILL = Colors.transparent;
 
 const double BASE_STROKE_WIDTH = 1;

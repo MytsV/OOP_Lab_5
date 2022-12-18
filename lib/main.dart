@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Лабораторна №2',
+      title: 'Лабораторна №3',
       home: const DrawingPage(),
       //Задаємо основний колір додатку
       theme:

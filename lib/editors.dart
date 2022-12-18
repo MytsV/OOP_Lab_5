@@ -90,15 +90,16 @@ class LineEditor extends Editor {
 class RectangleEditor extends Editor {
   Paint get _defaultPaint {
     Paint paint = Paint();
-    paint.color = BASE_COLOR;
+    paint.color = RECTANGLE_FILL;
     paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
   Paint get _shadowPaint {
     Paint paint = Paint();
-    paint.color = Colors.transparent;
+    paint.color = SHADOW_COLOR;
     paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.style = PaintingStyle.stroke;
     return paint;
   }
 
@@ -142,14 +143,15 @@ class EllipseEditor extends Editor {
 
   Paint get _shadowPaint {
     Paint paint = Paint();
-    paint.color = Colors.transparent;
+    paint.color = SHADOW_COLOR;
     paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.style = PaintingStyle.stroke;
     return paint;
   }
 
   Paint get _centerPaint {
     Paint paint = Paint();
-    paint.color = STROKE_COLOR;
+    paint.color = SHADOW_COLOR;
     paint.strokeWidth = BASE_STROKE_WIDTH + 1;
     return paint;
   }

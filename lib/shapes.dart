@@ -55,7 +55,9 @@ class RectangleShape extends Shape {
   void show(Canvas canvas) {
     Rect rect = Rect.fromPoints(leftUpper, rightLower);
     canvas.drawRect(rect, paint);
-    canvas.drawRect(rect, _strokePaint);
+    if (paint.style != PaintingStyle.stroke) {
+      canvas.drawRect(rect, _strokePaint);
+    }
   }
 }
 
@@ -81,6 +83,8 @@ class EllipseShape extends Shape {
     double height = (center.dy - corner.dy).abs() * 2;
     Rect rect = Rect.fromCenter(center: center, width: width, height: height);
     canvas.drawOval(rect, paint);
-    canvas.drawOval(rect, _strokePaint);
+    if (paint.style != PaintingStyle.stroke) {
+      canvas.drawOval(rect, _strokePaint);
+    }
   }
 }
