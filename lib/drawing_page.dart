@@ -58,9 +58,6 @@ class _DrawingPageState extends State<DrawingPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
           Text('Об\'єкти'),
-          SizedBox(
-            width: 5,
-          ),
           Icon(Icons.arrow_drop_down, color: Colors.white),
         ],
       ),
