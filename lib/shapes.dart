@@ -38,8 +38,8 @@ class LineShape extends Shape {
 class RectangleShape extends Shape {
   get _strokePaint {
     Paint paint = Paint();
-    paint.color = strokeColor;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = STROKE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     paint.style = PaintingStyle.stroke;
     return paint;
   }
@@ -62,8 +62,8 @@ class RectangleShape extends Shape {
 class EllipseShape extends Shape {
   get _strokePaint {
     Paint paint = Paint();
-    paint.color = strokeColor;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = STROKE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     paint.style = PaintingStyle.stroke;
     return paint;
   }

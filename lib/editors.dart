@@ -8,20 +8,20 @@ abstract class Editor {
   void onPanUpdate(DragUpdateDetails details);
   void onPanEnd(DragEndDetails details);
 
-  void addShape(Shape shape) {
-    shapes.value = List.from(shapes.value)..add(shape);
+  void includeShape(Shape shape) {
+    shapes.add(shape);
   }
 
-  void removeShape(Shape shape) {
-    shapes.value = List.from(shapes.value)..remove(shape);
+  void excludeShape(Shape shape) {
+    shapes.remove(shape);
   }
 }
 
 class PointEditor extends Editor {
   Paint get _defaultPaint {
     Paint paint = Paint();
-    paint.color = baseColor;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = BASE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
@@ -31,7 +31,7 @@ class PointEditor extends Editor {
   void onPanDown(DragDownDetails details) {
     PointShape shape = PointShape(details.localPosition);
     shape.paint = _defaultPaint;
-    super.addShape(shape);
+    super.includeShape(shape);
     _lastPosition = details.localPosition;
   }
 
@@ -40,7 +40,7 @@ class PointEditor extends Editor {
     LineShape shape = LineShape(_lastPosition!, details.localPosition);
     _lastPosition = details.localPosition;
     shape.paint = _defaultPaint;
-    super.addShape(shape);
+    super.includeShape(shape);
   }
 
   @override
@@ -52,15 +52,15 @@ class PointEditor extends Editor {
 class LineEditor extends Editor {
   Paint get _defaultPaint {
     Paint paint = Paint();
-    paint.color = baseColor;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = BASE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
   Paint get _shadowPaint {
     Paint paint = Paint();
-    paint.color = shadowColor;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = SHADOW_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
@@ -76,19 +76,19 @@ class LineEditor extends Editor {
   void onPanUpdate(DragUpdateDetails details) {
     LineShape shape = LineShape(_startPosition!, details.localPosition);
     if (_oldShape != null) {
-      removeShape(_oldShape!);
+      excludeShape(_oldShape!);
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
-    addShape(shape);
+    includeShape(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
-      removeShape(_oldShape!);
-      addShape(_oldShape!);
+      excludeShape(_oldShape!);
+      includeShape(_oldShape!);
     }
     _oldShape = null;
   }
@@ -97,15 +97,15 @@ class LineEditor extends Editor {
 class RectangleEditor extends Editor {
   Paint get _defaultPaint {
     Paint paint = Paint();
-    paint.color = baseColor;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = BASE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
   Paint get _shadowPaint {
     Paint paint = Paint();
     paint.color = Colors.transparent;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
@@ -121,19 +121,19 @@ class RectangleEditor extends Editor {
   void onPanUpdate(DragUpdateDetails details) {
     RectangleShape shape = RectangleShape(_leftUpper!, details.localPosition);
     if (_oldShape != null) {
-      removeShape(_oldShape!);
+      excludeShape(_oldShape!);
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
-    addShape(shape);
+    includeShape(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
-      removeShape(_oldShape!);
-      addShape(_oldShape!);
+      excludeShape(_oldShape!);
+      includeShape(_oldShape!);
     }
     _oldShape = null;
   }
@@ -142,22 +142,22 @@ class RectangleEditor extends Editor {
 class EllipseEditor extends Editor {
   Paint get _defaultPaint {
     Paint paint = Paint();
-    paint.color = ellipseFill;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.color = ELLIPSE_FILL;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
   Paint get _shadowPaint {
     Paint paint = Paint();
     paint.color = Colors.transparent;
-    paint.strokeWidth = baseStrokeWidth;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
     return paint;
   }
 
   Paint get _centerPaint {
     Paint paint = Paint();
-    paint.color = strokeColor;
-    paint.strokeWidth = baseStrokeWidth + 1;
+    paint.color = STROKE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
     return paint;
   }
 
@@ -170,28 +170,28 @@ class EllipseEditor extends Editor {
     _center = details.localPosition;
     _centerShape = PointShape(_center!);
     _centerShape!.paint = _centerPaint;
-    addShape(_centerShape!);
+    includeShape(_centerShape!);
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
     EllipseShape shape = EllipseShape(_center!, details.localPosition);
     if (_oldShape != null) {
-      removeShape(_oldShape!);
+      excludeShape(_oldShape!);
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
-    addShape(shape);
+    includeShape(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
-      removeShape(_oldShape!);
-      addShape(_oldShape!);
+      excludeShape(_oldShape!);
+      includeShape(_oldShape!);
     }
-    removeShape(_centerShape!);
+    excludeShape(_centerShape!);
     _oldShape = null;
   }
 }
