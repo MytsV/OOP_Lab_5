@@ -9,7 +9,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -306,6 +305,13 @@ class EllipseEditor extends Editor {
     return paint;
   }
 
+  Paint get _centerPaint {
+    Paint paint = Paint();
+    paint.color = strokeColor;
+    paint.strokeWidth = baseStrokeWidth + 1;
+    return paint;
+  }
+
   Offset? _center;
   EllipseShape? _oldShape;
   PointShape? _centerShape;
@@ -314,7 +320,7 @@ class EllipseEditor extends Editor {
   void onPanDown(DragDownDetails details) {
     _center = details.localPosition;
     _centerShape = PointShape(_center!);
-    _centerShape!.paint = _defaultPaint;
+    _centerShape!.paint = _centerPaint;
     addShape(_centerShape!);
   }
 
@@ -336,6 +342,7 @@ class EllipseEditor extends Editor {
       removeShape(_oldShape!);
       addShape(_oldShape!);
     }
+    removeShape(_centerShape!);
     _oldShape = null;
   }
 }
