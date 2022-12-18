@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'editors.dart';
 import 'shape_list.dart';
 import 'shape_painter.dart';
-import 'shapes.dart';
 import 'variant_values.dart';
 
 class Instrument {
@@ -37,6 +36,10 @@ class _DrawingPageState extends State<DrawingPage> {
         name: 'Еліпс',
         imagePath: 'assets/ellipse.png',
         editor: EllipseEditor()),
+    Instrument(
+        name: 'Лінія з двома еліпсами',
+        imagePath: 'assets/ellipse.png',
+        editor: OLineOEditor()),
   ];
 
   void _onMenuItemSelected(Editor value) {
@@ -149,7 +152,7 @@ class _DrawingPageState extends State<DrawingPage> {
                 width: double.maxFinite,
                 height: double.maxFinite,
                 //Оновлюємо поле малювання з кожним оновленням списку фігур
-                child: ValueListenableBuilder<List<Shape>>(
+                child: ValueListenableBuilder<List>(
                   valueListenable: shapes,
                   builder: (context, shapes, _) => CustomPaint(
                     painter: ShapePainter(),
