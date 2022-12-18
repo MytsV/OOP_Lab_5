@@ -83,7 +83,7 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   String _getAppBarText() {
-    switch(_currentEditor.runtimeType) {
+    switch (_currentEditor.runtimeType) {
       case PointEditor:
         return 'Крапка';
       case LineEditor:
@@ -98,7 +98,8 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   Widget _getToolbarButton(Instrument instrument) {
-    bool isSelected = instrument.editor.runtimeType == _currentEditor.runtimeType;
+    bool isSelected =
+        instrument.editor.runtimeType == _currentEditor.runtimeType;
     return Tooltip(
       message: instrument.name,
       child: GestureDetector(
@@ -122,9 +123,8 @@ class _DrawingPageState extends State<DrawingPage> {
   PreferredSizeWidget _getToolbar() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(40),
-      child: Row(
-        children: instruments.map((e) => _getToolbarButton(e)).toList()
-      ),
+      child:
+          Row(children: instruments.map((e) => _getToolbarButton(e)).toList()),
     );
   }
 
