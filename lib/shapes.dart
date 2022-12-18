@@ -21,7 +21,7 @@ class PointShape extends Shape {
   }
 }
 
-class LineShape extends Shape {
+class LineShape extends Shape with LineMixin {
   @protected
   final Offset start;
   @protected
@@ -31,19 +31,17 @@ class LineShape extends Shape {
 
   @override
   void show(Canvas canvas) {
+    showLine(canvas, start, end);
+  }
+}
+
+mixin LineMixin on Shape {
+  void showLine(Canvas canvas, Offset start, Offset end) {
     canvas.drawLine(start, end, paint);
   }
 }
 
-class RectangleShape extends Shape {
-  get _strokePaint {
-    Paint paint = Paint();
-    paint.color = STROKE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
-
+class RectangleShape extends Shape with RectangleMixin {
   @protected
   final Offset center;
   @protected
@@ -53,6 +51,20 @@ class RectangleShape extends Shape {
 
   @override
   void show(Canvas canvas) {
+    showRectangle(canvas, center, corner);
+  }
+}
+
+mixin RectangleMixin on Shape {
+  get _strokePaint {
+    Paint paint = Paint();
+    paint.color = STROKE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.style = PaintingStyle.stroke;
+    return paint;
+  }
+
+  void showRectangle(Canvas canvas, Offset center, Offset corner) {
     double width = (center.dx - corner.dx).abs() * 2;
     double height = (center.dy - corner.dy).abs() * 2;
     Rect rect = Rect.fromCenter(center: center, width: width, height: height);
@@ -63,15 +75,7 @@ class RectangleShape extends Shape {
   }
 }
 
-class EllipseShape extends Shape {
-  get _strokePaint {
-    Paint paint = Paint();
-    paint.color = STROKE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
-
+class EllipseShape extends Shape with EllipseMixin {
   @protected
   final Offset leftUpper;
   @protected
@@ -81,6 +85,20 @@ class EllipseShape extends Shape {
 
   @override
   void show(Canvas canvas) {
+    showEllipse(canvas, leftUpper, rightLower);
+  }
+}
+
+mixin EllipseMixin on Shape {
+  get _strokePaint {
+    Paint paint = Paint();
+    paint.color = STROKE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.style = PaintingStyle.stroke;
+    return paint;
+  }
+
+  void showEllipse(Canvas canvas, Offset leftUpper, Offset rightLower) {
     Rect rect = Rect.fromPoints(leftUpper, rightLower);
     canvas.drawOval(rect, paint);
     if (paint.style != PaintingStyle.stroke) {
