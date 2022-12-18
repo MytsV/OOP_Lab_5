@@ -57,6 +57,13 @@ class LineEditor extends Editor {
     return paint;
   }
 
+  Paint get _centerPaint {
+    Paint paint = Paint();
+    paint.color = SHADOW_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
+    return paint;
+  }
+
   Offset? _startPosition;
   LineShape? _oldShape;
 
@@ -72,7 +79,7 @@ class LineEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _shadowPaint;
+    shape.paint = _centerPaint;
     shapes.add(shape);
   }
 
@@ -103,17 +110,21 @@ class RectangleEditor extends Editor {
     return paint;
   }
 
-  Offset? _leftUpper;
+  Offset? _center;
   RectangleShape? _oldShape;
+  PointShape? _centerShape;
 
   @override
   void onPanDown(DragDownDetails details) {
-    _leftUpper = details.localPosition;
+    _center = details.localPosition;
+    _centerShape = PointShape(_center!);
+    _centerShape!.paint = _shadowPaint;
+    shapes.add(_centerShape!);
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    RectangleShape shape = RectangleShape(_leftUpper!, details.localPosition);
+    RectangleShape shape = RectangleShape(_center!, details.localPosition);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -130,6 +141,7 @@ class RectangleEditor extends Editor {
       shapes.add(_oldShape!);
     }
     _oldShape = null;
+    shapes.remove(_centerShape!);
   }
 }
 
@@ -149,28 +161,17 @@ class EllipseEditor extends Editor {
     return paint;
   }
 
-  Paint get _centerPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
-    return paint;
-  }
-
-  Offset? _center;
+  Offset? _leftUpper;
   EllipseShape? _oldShape;
-  PointShape? _centerShape;
 
   @override
   void onPanDown(DragDownDetails details) {
-    _center = details.localPosition;
-    _centerShape = PointShape(_center!);
-    _centerShape!.paint = _centerPaint;
-    shapes.add(_centerShape!);
+    _leftUpper = details.localPosition;
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    EllipseShape shape = EllipseShape(_center!, details.localPosition);
+    EllipseShape shape = EllipseShape(_leftUpper!, details.localPosition);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -186,7 +187,6 @@ class EllipseEditor extends Editor {
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);
     }
-    shapes.remove(_centerShape!);
     _oldShape = null;
   }
 }

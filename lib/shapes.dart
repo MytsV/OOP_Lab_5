@@ -45,15 +45,17 @@ class RectangleShape extends Shape {
   }
 
   @protected
-  final Offset leftUpper;
+  final Offset center;
   @protected
-  final Offset rightLower;
+  final Offset corner;
 
-  RectangleShape(this.leftUpper, this.rightLower);
+  RectangleShape(this.center, this.corner);
 
   @override
   void show(Canvas canvas) {
-    Rect rect = Rect.fromPoints(leftUpper, rightLower);
+    double width = (center.dx - corner.dx).abs() * 2;
+    double height = (center.dy - corner.dy).abs() * 2;
+    Rect rect = Rect.fromCenter(center: center, width: width, height: height);
     canvas.drawRect(rect, paint);
     if (paint.style != PaintingStyle.stroke) {
       canvas.drawRect(rect, _strokePaint);
@@ -71,17 +73,15 @@ class EllipseShape extends Shape {
   }
 
   @protected
-  final Offset center;
+  final Offset leftUpper;
   @protected
-  final Offset corner;
+  final Offset rightLower;
 
-  EllipseShape(this.center, this.corner);
+  EllipseShape(this.leftUpper, this.rightLower);
 
   @override
   void show(Canvas canvas) {
-    double width = (center.dx - corner.dx).abs() * 2;
-    double height = (center.dy - corner.dy).abs() * 2;
-    Rect rect = Rect.fromCenter(center: center, width: width, height: height);
+    Rect rect = Rect.fromPoints(leftUpper, rightLower);
     canvas.drawOval(rect, paint);
     if (paint.style != PaintingStyle.stroke) {
       canvas.drawOval(rect, _strokePaint);
