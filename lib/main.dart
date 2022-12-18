@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import 'drawing_page.dart';
@@ -17,7 +15,8 @@ class MyApp extends StatelessWidget {
       title: 'Лабораторна №2',
       home: const DrawingPage(),
       //Задаємо основний колір додатку
-      theme: ThemeData(primaryColor: Colors.indigo, primarySwatch: Colors.indigo),
+      theme:
+          ThemeData(primaryColor: Colors.indigo, primarySwatch: Colors.indigo),
       //Вимикаємо відображення баннеру "Debug"
       debugShowCheckedModeBanner: false,
     );

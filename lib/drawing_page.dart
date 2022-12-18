@@ -42,7 +42,9 @@ class _DrawingPageState extends State<DrawingPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
           Text('Об\'єкти'),
-          SizedBox(width: 5,),
+          SizedBox(
+            width: 5,
+          ),
           Icon(Icons.arrow_drop_down, color: Colors.white),
         ],
       ),
@@ -50,37 +52,37 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   Widget _getMenuButton() => PopupMenuButton(
-    child: _getMenuChild(),
-    itemBuilder: (context) {
-      return [
-        PopupMenuItem<Editor>(
-          value: PointEditor(),
-          child: _getButtonChild('Крапка', PointEditor),
-        ),
-        PopupMenuItem<Editor>(
-          value: LineEditor(),
-          child: _getButtonChild('Лінія', LineEditor),
-        ),
-        PopupMenuItem<Editor>(
-          value: RectangleEditor(),
-          child: _getButtonChild('Прямокутник', RectangleEditor),
-        ),
-        PopupMenuItem<Editor>(
-          value: EllipseEditor(),
-          child: _getButtonChild('Еліпс', EllipseEditor),
-        ),
-      ];
-    },
-    onSelected: _onMenuItemSelected,
-  );
+        child: _getMenuChild(),
+        itemBuilder: (context) {
+          return [
+            PopupMenuItem<Editor>(
+              value: PointEditor(),
+              child: _getButtonChild('Крапка', PointEditor),
+            ),
+            PopupMenuItem<Editor>(
+              value: LineEditor(),
+              child: _getButtonChild('Лінія', LineEditor),
+            ),
+            PopupMenuItem<Editor>(
+              value: RectangleEditor(),
+              child: _getButtonChild('Прямокутник', RectangleEditor),
+            ),
+            PopupMenuItem<Editor>(
+              value: EllipseEditor(),
+              child: _getButtonChild('Еліпс', EllipseEditor),
+            ),
+          ];
+        },
+        onSelected: _onMenuItemSelected,
+      );
 
   //Отримуємо об'єкт, що задає стиль обведення поля малювання
   BoxDecoration _getDrawContainerDecoration() {
     return BoxDecoration(
-        border: Border.all(style: BorderStyle.solid, color: Theme
-            .of(context)
-            .primaryColor, width: BASE_STROKE_WIDTH + 1)
-    );
+        border: Border.all(
+            style: BorderStyle.solid,
+            color: Theme.of(context).primaryColor,
+            width: BASE_STROKE_WIDTH + 1));
   }
 
   @override
