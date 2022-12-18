@@ -7,14 +7,6 @@ abstract class Editor {
   void onPanDown(DragDownDetails details);
   void onPanUpdate(DragUpdateDetails details);
   void onPanEnd(DragEndDetails details);
-
-  void includeShape(Shape shape) {
-    shapes.add(shape);
-  }
-
-  void excludeShape(Shape shape) {
-    shapes.remove(shape);
-  }
 }
 
 class PointEditor extends Editor {
@@ -31,7 +23,7 @@ class PointEditor extends Editor {
   void onPanDown(DragDownDetails details) {
     PointShape shape = PointShape(details.localPosition);
     shape.paint = _defaultPaint;
-    super.includeShape(shape);
+    shapes.add(shape);
     _lastPosition = details.localPosition;
   }
 
@@ -40,7 +32,7 @@ class PointEditor extends Editor {
     LineShape shape = LineShape(_lastPosition!, details.localPosition);
     _lastPosition = details.localPosition;
     shape.paint = _defaultPaint;
-    super.includeShape(shape);
+    shapes.add(shape);
   }
 
   @override
@@ -76,19 +68,19 @@ class LineEditor extends Editor {
   void onPanUpdate(DragUpdateDetails details) {
     LineShape shape = LineShape(_startPosition!, details.localPosition);
     if (_oldShape != null) {
-      excludeShape(_oldShape!);
+      shapes.remove(_oldShape!);
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
-    includeShape(shape);
+    shapes.add(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
-      excludeShape(_oldShape!);
-      includeShape(_oldShape!);
+      shapes.add(_oldShape!);
+      shapes.remove(_oldShape!);
     }
     _oldShape = null;
   }
@@ -121,19 +113,19 @@ class RectangleEditor extends Editor {
   void onPanUpdate(DragUpdateDetails details) {
     RectangleShape shape = RectangleShape(_leftUpper!, details.localPosition);
     if (_oldShape != null) {
-      excludeShape(_oldShape!);
+      shapes.remove(_oldShape!);
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
-    includeShape(shape);
+    shapes.add(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
-      excludeShape(_oldShape!);
-      includeShape(_oldShape!);
+      shapes.remove(_oldShape!);
+      shapes.add(_oldShape!);
     }
     _oldShape = null;
   }
@@ -170,28 +162,28 @@ class EllipseEditor extends Editor {
     _center = details.localPosition;
     _centerShape = PointShape(_center!);
     _centerShape!.paint = _centerPaint;
-    includeShape(_centerShape!);
+    shapes.add(_centerShape!);
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
     EllipseShape shape = EllipseShape(_center!, details.localPosition);
     if (_oldShape != null) {
-      excludeShape(_oldShape!);
+      shapes.remove(_oldShape!);
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
-    includeShape(shape);
+    shapes.add(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
-      excludeShape(_oldShape!);
-      includeShape(_oldShape!);
+      shapes.remove(_oldShape!);
+      shapes.add(_oldShape!);
     }
-    excludeShape(_centerShape!);
+    shapes.remove(_centerShape!);
     _oldShape = null;
   }
 }

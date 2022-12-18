@@ -16,7 +16,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Лабораторна №2',
       home: const DrawingPage(),
+      //Задаємо основний колір додатку
       theme: ThemeData(primaryColor: Colors.indigo, primarySwatch: Colors.indigo),
+      //Вимикаємо відображення баннеру "Debug"
       debugShowCheckedModeBanner: false,
     );
   }

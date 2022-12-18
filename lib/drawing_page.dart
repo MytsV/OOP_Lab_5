@@ -24,6 +24,7 @@ class _DrawingPageState extends State<DrawingPage> {
 
   _getButtonChild(String text, Type editorType) {
     if (_currentEditor.runtimeType != editorType) return Text(text);
+    //Якщо тип кнопки співпадає з типом вибраного Editor'а, відображаємо прапорець
     return Row(
       children: [
         Text(text),
@@ -73,6 +74,7 @@ class _DrawingPageState extends State<DrawingPage> {
     onSelected: _onMenuItemSelected,
   );
 
+  //Отримуємо об'єкт, що задає стиль обведення поля малювання
   BoxDecoration _getDrawContainerDecoration() {
     return BoxDecoration(
         border: Border.all(style: BorderStyle.solid, color: Theme
@@ -88,6 +90,7 @@ class _DrawingPageState extends State<DrawingPage> {
         title: _getMenuButton(),
       ),
       body: Padding(
+        //Робимо відступ між краями екрану й полем малювання
         padding: const EdgeInsets.all(30.0),
         child: Container(
           decoration: _getDrawContainerDecoration(),
@@ -99,6 +102,7 @@ class _DrawingPageState extends State<DrawingPage> {
               child: SizedBox(
                 width: double.maxFinite,
                 height: double.maxFinite,
+                //Оновлюємо поле малювання з кожним оновленням списку фігур
                 child: ValueListenableBuilder<List<Shape>>(
                   valueListenable: shapes,
                   builder: (context, shapes, _) => CustomPaint(
