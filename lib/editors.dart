@@ -57,13 +57,6 @@ class LineEditor extends Editor {
     return paint;
   }
 
-  Paint get _centerPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
-    return paint;
-  }
-
   Offset? _startPosition;
   LineShape? _oldShape;
 
@@ -79,7 +72,7 @@ class LineEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _centerPaint;
+    shape.paint = _shadowPaint;
     shapes.add(shape);
   }
 
@@ -110,6 +103,13 @@ class RectangleEditor extends Editor {
     return paint;
   }
 
+  Paint get _centerPaint {
+    Paint paint = Paint();
+    paint.color = SHADOW_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
+    return paint;
+  }
+
   Offset? _center;
   RectangleShape? _oldShape;
   PointShape? _centerShape;
@@ -118,7 +118,7 @@ class RectangleEditor extends Editor {
   void onPanDown(DragDownDetails details) {
     _center = details.localPosition;
     _centerShape = PointShape(_center!);
-    _centerShape!.paint = _shadowPaint;
+    _centerShape!.paint = _centerPaint;
     shapes.add(_centerShape!);
   }
 

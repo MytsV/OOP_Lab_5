@@ -22,19 +22,7 @@ class _DrawingPageState extends State<DrawingPage> {
     });
   }
 
-  _getButtonChild(String text, Type editorType) {
-    if (_currentEditor.runtimeType != editorType) return Text(text);
-    //Якщо тип кнопки співпадає з типом вибраного Editor'а, відображаємо прапорець
-    return Row(
-      children: [
-        Text(text),
-        const SizedBox(
-          width: 5,
-        ),
-        Icon(Icons.check, color: Theme.of(context).primaryColor),
-      ],
-    );
-  }
+  _getButtonChild(String text) => Text(text);
 
   Widget _getMenuChild() {
     return IntrinsicWidth(
@@ -57,19 +45,19 @@ class _DrawingPageState extends State<DrawingPage> {
           return [
             PopupMenuItem<Editor>(
               value: PointEditor(),
-              child: _getButtonChild('Крапка', PointEditor),
+              child: _getButtonChild('Крапка'),
             ),
             PopupMenuItem<Editor>(
               value: LineEditor(),
-              child: _getButtonChild('Лінія', LineEditor),
+              child: _getButtonChild('Лінія'),
             ),
             PopupMenuItem<Editor>(
               value: RectangleEditor(),
-              child: _getButtonChild('Прямокутник', RectangleEditor),
+              child: _getButtonChild('Прямокутник'),
             ),
             PopupMenuItem<Editor>(
               value: EllipseEditor(),
-              child: _getButtonChild('Еліпс', EllipseEditor),
+              child: _getButtonChild('Еліпс'),
             ),
           ];
         },
@@ -85,11 +73,28 @@ class _DrawingPageState extends State<DrawingPage> {
             width: BASE_STROKE_WIDTH + 1));
   }
 
+  String _getAppBarText() {
+    String text;
+    switch(_currentEditor.runtimeType) {
+      case PointEditor:
+        return 'Крапка';
+      case LineEditor:
+        return 'Лінія';
+      case RectangleEditor:
+        return 'Прямокутник';
+      case EllipseEditor:
+        return 'Еліпс';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _getMenuButton(),
+        title: Text(_getAppBarText()),
+        actions: [_getMenuButton()],
       ),
       body: Padding(
         //Робимо відступ між краями екрану й полем малювання
