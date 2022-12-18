@@ -13,9 +13,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Лабораторна №2',
-      home: DrawingPage(),
+      home: const DrawingPage(),
+      theme: ThemeData(primaryColor: Colors.indigo, primarySwatch: Colors.indigo),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -27,8 +27,10 @@ class _DrawingPageState extends State<DrawingPage> {
       return Row(
         children: [
           Text(text),
-          const SizedBox(width: 5,),
-          const Icon(Icons.check, color: Colors.blue),
+          const SizedBox(
+            width: 5,
+          ),
+          Icon(Icons.check, color: Theme.of(context).primaryColor),
         ],
       );
     }
@@ -79,7 +81,9 @@ class _DrawingPageState extends State<DrawingPage> {
         padding: const EdgeInsets.all(30.0),
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(style: BorderStyle.solid, color: Colors.blue, width: BASE_STROKE_WIDTH + 1)
+              border: Border.all(style: BorderStyle.solid, color: Theme
+                  .of(context)
+                  .primaryColor, width: BASE_STROKE_WIDTH + 1)
           ),
           child: GestureDetector(
             onPanDown: _currentEditor.onPanDown,
