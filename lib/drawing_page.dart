@@ -23,22 +23,20 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   _getButtonChild(String text, Type editorType) {
-    if (_currentEditor.runtimeType == editorType) {
-      return Row(
-        children: [
-          Text(text),
-          const SizedBox(
-            width: 5,
-          ),
-          Icon(Icons.check, color: Theme.of(context).primaryColor),
-        ],
-      );
-    }
-    return Text(text);
+    if (_currentEditor.runtimeType != editorType) return Text(text);
+    return Row(
+      children: [
+        Text(text),
+        const SizedBox(
+          width: 5,
+        ),
+        Icon(Icons.check, color: Theme.of(context).primaryColor),
+      ],
+    );
   }
 
-  Widget _getMenuButton() => PopupMenuButton(
-    child: IntrinsicWidth(
+  Widget _getMenuChild() {
+    return IntrinsicWidth(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
@@ -47,7 +45,11 @@ class _DrawingPageState extends State<DrawingPage> {
           Icon(Icons.arrow_drop_down, color: Colors.white),
         ],
       ),
-    ),
+    );
+  }
+
+  Widget _getMenuButton() => PopupMenuButton(
+    child: _getMenuChild(),
     itemBuilder: (context) {
       return [
         PopupMenuItem<Editor>(
@@ -71,6 +73,14 @@ class _DrawingPageState extends State<DrawingPage> {
     onSelected: _onMenuItemSelected,
   );
 
+  BoxDecoration _getDrawContainerDecoration() {
+    return BoxDecoration(
+        border: Border.all(style: BorderStyle.solid, color: Theme
+            .of(context)
+            .primaryColor, width: BASE_STROKE_WIDTH + 1)
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,11 +90,7 @@ class _DrawingPageState extends State<DrawingPage> {
       body: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(style: BorderStyle.solid, color: Theme
-                  .of(context)
-                  .primaryColor, width: BASE_STROKE_WIDTH + 1)
-          ),
+          decoration: _getDrawContainerDecoration(),
           child: GestureDetector(
             onPanDown: _currentEditor.onPanDown,
             onPanUpdate: _currentEditor.onPanUpdate,
