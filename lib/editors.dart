@@ -54,6 +54,7 @@ class LineEditor extends Editor {
     Paint paint = Paint();
     paint.color = SHADOW_COLOR;
     paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.style = PaintingStyle.stroke;
     return paint;
   }
 
@@ -73,6 +74,7 @@ class LineEditor extends Editor {
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
+    shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
 
@@ -80,6 +82,7 @@ class LineEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
+      _oldShape!.type = ShapeType.regular;
       shapes.add(_oldShape!);
       shapes.remove(_oldShape!);
     }
@@ -130,6 +133,7 @@ class RectangleEditor extends Editor {
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
+    shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
 
@@ -137,6 +141,7 @@ class RectangleEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
+      _oldShape!.type = ShapeType.regular;
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);
     }
@@ -177,6 +182,7 @@ class EllipseEditor extends Editor {
     }
     _oldShape = shape;
     shape.paint = _shadowPaint;
+    shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
 
@@ -184,6 +190,7 @@ class EllipseEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
+      _oldShape!.type = ShapeType.regular;
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);
     }

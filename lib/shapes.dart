@@ -1,11 +1,17 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 import 'variant_values.dart';
 
+enum ShapeType { shadowed, regular }
+final dashIntervals = CircularIntervalList<double>([15]);
+
 abstract class Shape {
   late Paint paint;
+  ShapeType type = ShapeType.regular;
+
   void show(Canvas canvas);
 }
 
@@ -37,7 +43,15 @@ class LineShape extends Shape with LineMixin {
 
 mixin LineMixin on Shape {
   void showLine(Canvas canvas, Offset start, Offset end) {
-    canvas.drawLine(start, end, paint);
+    if (type == ShapeType.regular) {
+      canvas.drawLine(start, end, paint);
+    } else {
+      Path path = Path();
+      path.moveTo(start.dx, start.dy);
+      path.lineTo(end.dx, end.dy);
+      canvas.drawPath(
+          dashPath(path, dashArray: dashIntervals), paint);
+    }
   }
 }
 
@@ -68,9 +82,16 @@ mixin RectangleMixin on Shape {
     double width = (center.dx - corner.dx).abs() * 2;
     double height = (center.dy - corner.dy).abs() * 2;
     Rect rect = Rect.fromCenter(center: center, width: width, height: height);
-    canvas.drawRect(rect, paint);
-    if (paint.style != PaintingStyle.stroke) {
-      canvas.drawRect(rect, _strokePaint);
+    if (type == ShapeType.shadowed) {
+      Path path = Path();
+      path.addRect(rect);
+      canvas.drawPath(
+          dashPath(path, dashArray: dashIntervals), paint);
+    } else {
+      canvas.drawRect(rect, paint);
+      if (paint.style != PaintingStyle.stroke) {
+        canvas.drawRect(rect, _strokePaint);
+      }
     }
   }
 }
@@ -100,9 +121,16 @@ mixin EllipseMixin on Shape {
 
   void showEllipse(Canvas canvas, Offset leftUpper, Offset rightLower) {
     Rect rect = Rect.fromPoints(leftUpper, rightLower);
-    canvas.drawOval(rect, paint);
-    if (paint.style != PaintingStyle.stroke) {
-      canvas.drawOval(rect, _strokePaint);
+    if (type == ShapeType.regular) {
+      canvas.drawOval(rect, paint);
+      if (paint.style != PaintingStyle.stroke) {
+        canvas.drawOval(rect, _strokePaint);
+      }
+    } else {
+      Path path = Path();
+      path.addOval(rect);
+      canvas.drawPath(
+          dashPath(path, dashArray: dashIntervals), paint);
     }
   }
 }
