@@ -38,10 +38,10 @@ class _DrawingPageState extends State<DrawingPage> {
         editor: EllipseEditor()),
     Instrument(
         name: 'О-лінія-О',
-        imagePath: 'assets/ellipse.png',
+        imagePath: 'assets/o-line-o.png',
         editor: OLineOEditor()),
     Instrument(
-        name: 'Куб', imagePath: 'assets/ellipse.png', editor: CubeEditor()),
+        name: 'Куб', imagePath: 'assets/cube.png', editor: CubeEditor()),
   ];
 
   void _onMenuItemSelected(Editor value) {
@@ -102,13 +102,16 @@ class _DrawingPageState extends State<DrawingPage> {
           child: Container(
             width: 40,
             height: 40,
-            color: Colors.indigo[200],
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.indigo, width: 4),
+              color: Colors.indigo[200],
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(5),
               child: Image.asset(
                 instrument.imagePath,
                 color: isSelected ? Colors.indigo[900] : Colors.white,
-                filterQuality: FilterQuality.none,
+                filterQuality: FilterQuality.medium,
               ),
             ),
           )),
