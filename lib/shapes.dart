@@ -82,7 +82,7 @@ mixin LineMixin on Shape {
 
     Paint highlightedPaint = Paint();
     highlightedPaint.color = HIGHLIGHT_COLOR;
-    highlightedPaint.strokeWidth = BASE_STROKE_WIDTH;
+    highlightedPaint.strokeWidth = BASE_STROKE_WIDTH + 1;
     highlightedPaint.style = PaintingStyle.stroke;
 
     if (type != ShapeType.shadowed) {

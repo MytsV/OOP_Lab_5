@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ShapeTable {
@@ -54,14 +55,84 @@ class _TableFileManager {
   void write(List<TableEntry> entries) async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final File file = File('${directory.path}/table.txt');
-    String text = entries.map((e) =>
-    [
-      e.name,
-      e.x1.toString(),
-      e.y1.toString(),
-      e.x2.toString(),
-      e.y2.toString()
-    ].join('\t')).join('\n');
+    String text = entries
+        .map((e) => [
+              e.name,
+              e.x1.toString(),
+              e.y1.toString(),
+              e.x2.toString(),
+              e.y2.toString()
+            ].join('\t'))
+        .join('\n');
     file.writeAsString(text);
+  }
+}
+
+class TableView extends StatelessWidget {
+  final void Function(int) onHighlight;
+
+  TableView({required this.onHighlight, Key? key}) : super(key: key);
+  final ScrollController _controller = ScrollController();
+
+  List<Widget> _getTableRowChildren(List<String> values, {bool main = false}) {
+    return values
+        .map((e) => Padding(
+              //Додаємо відступи від тексту
+              padding: const EdgeInsets.all(5),
+              child: Text(
+                e,
+                style: main
+                    ? const TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold)
+                    : null,
+              ),
+            ))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ShapeTable table = ShapeTable.getInstance();
+    return StreamBuilder(
+      stream: table.stream,
+      builder: (context, _) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          _controller.animateTo(_controller.position.maxScrollExtent,
+              curve: Curves.linear,
+              duration: const Duration(milliseconds: 300));
+        });
+        return SingleChildScrollView(
+          controller: _controller,
+          child: Table(
+            children: [
+              TableRow(
+                  children: _getTableRowChildren(
+                      ['Назва', 'x1', 'y1', 'x2', 'y2', ''],
+                      main: true)),
+              ...table.entries.map((e) {
+                return TableRow(children: [
+                  ..._getTableRowChildren([
+                    e.name,
+                    e.x1.toString(),
+                    e.y1.toString(),
+                    e.x2.toString(),
+                    e.y2.toString()
+                  ]),
+                  IconButton(onPressed: () {
+                    onHighlight(table.entries.indexOf(e));
+                  }, icon: Icon(Icons.highlight))
+                ]);
+              }).toList()
+            ],
+            //Перший стовпчик буде ширшим у 4 рази за інші
+            columnWidths: const {
+              0: FlexColumnWidth(4),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            border: TableBorder.all(color: Colors.black),
+          ),
+        );
+      },
+    );
   }
 }

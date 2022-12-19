@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:oop_lab_2/shape_list.dart';
 import 'package:oop_lab_2/shape_table.dart';
+import 'package:oop_lab_2/shapes.dart';
 
 import 'drawing_page.dart';
 
@@ -35,6 +36,13 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   bool _tableOpen = false;
+
+  void _highlightShape(int index) {
+    Shape shape = shapes.value[index];
+    shape.type = shape.type == ShapeType.regular ? ShapeType.highlighted : ShapeType.regular;
+    shapes.remove(shape);
+    shapes.value.insert(index, shape);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,75 +94,12 @@ class _MainViewState extends State<MainView> {
                       .of(context)
                       .primaryColor,
                 ),
-                if (_tableOpen) Expanded(child: TableView()),
+                if (_tableOpen) Expanded(child: TableView(onHighlight: _highlightShape,)),
               ],
             ),
           )
         ],
       ),
-    );
-  }
-}
-
-class TableView extends StatelessWidget {
-  TableView({Key? key}) : super(key: key);
-  final ScrollController _controller = ScrollController();
-
-  List<Widget> _getTableRowChildren(List<String> values, {bool main = false}) {
-    return values
-        .map((e) =>
-        Padding(
-          //Додаємо відступи від тексту
-          padding: const EdgeInsets.all(5),
-          child: Text(
-            e,
-            style: main
-                ? const TextStyle(
-                color: Colors.red, fontWeight: FontWeight.bold)
-                : null,
-          ),
-        ))
-        .toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ShapeTable table = ShapeTable.getInstance();
-    return StreamBuilder(
-      stream: table.stream,
-      builder: (context, _) {
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
-          _controller.animateTo(_controller.position.maxScrollExtent, curve: Curves.linear, duration: const Duration(milliseconds: 300));
-        });
-        return SingleChildScrollView(
-          controller: _controller,
-          child: Table(
-            children: [
-              TableRow(
-                  children: _getTableRowChildren(
-                      ['Назва', 'x1', 'y1', 'x2', 'y2'],
-                      main: true)),
-              ...table.entries
-                  .map((e) =>
-                  TableRow(
-                      children: _getTableRowChildren([
-                        e.name,
-                        e.x1.toString(),
-                        e.y1.toString(),
-                        e.x2.toString(),
-                        e.y2.toString()
-                      ])))
-                  .toList()
-            ],
-            //Перший стовпчик буде ширшим у 4 рази за інші
-            columnWidths: const {
-              0: FlexColumnWidth(4),
-            },
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            border: TableBorder.all(color: Colors.black),
-          ),
-        );
-      },
     );
   }
 }
