@@ -44,6 +44,11 @@ class _MainViewState extends State<MainView> {
     shapes.value.insert(index, shape);
   }
 
+  void _removeShape(int index) {
+    Shape shape = shapes.value[index];
+    shapes.remove(shape);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +99,7 @@ class _MainViewState extends State<MainView> {
                       .of(context)
                       .primaryColor,
                 ),
-                if (_tableOpen) Expanded(child: TableView(onHighlight: _highlightShape,)),
+                if (_tableOpen) Expanded(child: TableView(onHighlight: _highlightShape, onRemove: _removeShape)),
               ],
             ),
           )

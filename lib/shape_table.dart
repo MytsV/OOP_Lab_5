@@ -28,9 +28,16 @@ class ShapeTable {
     _TableFileManager.getInstance().write(_entries);
   }
 
+  void remove(int index) {
+    _entries.removeAt(index);
+    _streamController.add(null);
+    _TableFileManager.getInstance().write(_entries);
+  }
+
   void clear() {
     _entries.clear();
     _streamController.add(null);
+    _TableFileManager.getInstance().write(_entries);
   }
 
   get stream => _streamController.stream;
@@ -70,8 +77,9 @@ class _TableFileManager {
 
 class TableView extends StatelessWidget {
   final void Function(int) onHighlight;
+  final void Function(int) onRemove;
 
-  TableView({required this.onHighlight, Key? key}) : super(key: key);
+  TableView({required this.onHighlight, required this.onRemove, Key? key}) : super(key: key);
   final ScrollController _controller = ScrollController();
 
   List<Widget> _getTableRowChildren(List<String> values, {bool main = false}) {
@@ -107,7 +115,7 @@ class TableView extends StatelessWidget {
             children: [
               TableRow(
                   children: _getTableRowChildren(
-                      ['Назва', 'x1', 'y1', 'x2', 'y2', ''],
+                      ['Назва', 'x1', 'y1', 'x2', 'y2', '', ''],
                       main: true)),
               ...table.entries.map((e) {
                 return TableRow(children: [
@@ -120,7 +128,12 @@ class TableView extends StatelessWidget {
                   ]),
                   IconButton(onPressed: () {
                     onHighlight(table.entries.indexOf(e));
-                  }, icon: Icon(Icons.highlight))
+                  }, icon: Icon(Icons.highlight)),
+                  IconButton(onPressed: () {
+                    int index = table.entries.indexOf(e);
+                    table.remove(index);
+                    onRemove(index);
+                  }, icon: Icon(Icons.clear))
                 ]);
               }).toList()
             ],
