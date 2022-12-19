@@ -73,6 +73,10 @@ class _TableFileManager {
         .join('\n');
     file.writeAsString(text);
   }
+
+  void read(String path) async {
+
+  }
 }
 
 class TableView extends StatelessWidget {
