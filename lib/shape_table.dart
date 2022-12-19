@@ -15,6 +15,11 @@ class ShapeTable {
     _streamController.add(null);
   }
 
+  void clear() {
+    _entries.clear();
+    _streamController.add(null);
+  }
+
   get stream => _streamController.stream;
 }
 

@@ -12,6 +12,10 @@ class NotifiedList<T> extends ValueNotifier<List<T>> {
   remove(T element) {
     value = List.from(value)..remove(element);
   }
+
+  clear() {
+    value = [];
+  }
 }
 
 final shapes = NotifiedList<Shape>();

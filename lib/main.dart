@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:oop_lab_2/shape_list.dart';
 import 'package:oop_lab_2/shape_table.dart';
 
 import 'drawing_page.dart';
@@ -63,13 +64,17 @@ class _MainViewState extends State<MainView> {
                             color: Colors.white,
                           )),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                          },
                           icon: const Icon(
                             Icons.upload_file,
                             color: Colors.white,
                           )),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            ShapeTable.getInstance().clear();
+                            shapes.clear();
+                          },
                           icon: const Icon(
                             Icons.delete_forever,
                             color: Colors.white,
