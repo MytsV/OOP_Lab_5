@@ -4,6 +4,7 @@ class ShapeTable {
   static ShapeTable getInstance() => _instance;
 
   final List<TableEntry> _entries = [];
+  List<TableEntry> get entries => List.from(_entries);
 
   void add(String name, {required int x1, required int x2, required int y1, required int y2}) {
     _entries.add(TableEntry._(name: name, x1: x1, x2: x2, y1: y1, y2: y2));

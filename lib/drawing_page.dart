@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:oop_lab_2/shape_list.dart';
+import 'package:oop_lab_2/shape_painter.dart';
 import 'package:oop_lab_2/shape_table.dart';
 
 import 'editors.dart';
-import 'shape_list.dart';
-import 'shape_painter.dart';
 import 'variant_values.dart';
 
 class _Tool {
@@ -180,6 +180,54 @@ class _DrawingPageState extends State<DrawingPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class TableView extends StatelessWidget {
+  const TableView({Key? key}) : super(key: key);
+
+  List<Widget> _getTableRowChildren(List<String> values, {bool main = false}) {
+    return values
+        .map((e) => Padding(
+          //Додаємо відступи від тексту
+          padding: const EdgeInsets.all(5),
+          child: Text(
+                e,
+                style: main
+                    ? const TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold)
+                    : null,
+              ),
+        ))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ShapeTable table = ShapeTable.getInstance();
+    return Table(
+      children: [
+        TableRow(
+            children: _getTableRowChildren(['Назва', 'x1', 'y1', 'x2', 'y2'],
+                main: true)),
+        ...table.entries
+            .map((e) => TableRow(
+                    children: _getTableRowChildren([
+                  e.name,
+                  e.x1.toString(),
+                  e.y1.toString(),
+                  e.x2.toString(),
+                  e.y2.toString()
+                ])))
+            .toList()
+      ],
+      //Перший стовпчик буде ширшим у 4 рази за інші
+      columnWidths: const {
+        0: FlexColumnWidth(4),
+      },
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      border: TableBorder.all(color: Colors.black),
     );
   }
 }
