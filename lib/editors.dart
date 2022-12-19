@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:oop_lab_2/shape_list.dart';
-import 'package:oop_lab_2/variant_values.dart';
-
 import 'shapes.dart';
 
 abstract class Editor {
@@ -17,19 +15,11 @@ abstract class Editor {
 class PointEditor extends Editor {
   PointEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
 
-  Paint get _defaultPaint {
-    Paint paint = Paint();
-    paint.color = BASE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
-    return paint;
-  }
-
   Offset? _start;
 
   @override
   void onPanDown(DragDownDetails details) {
     PointShape shape = PointShape(details.localPosition);
-    shape.paint = _defaultPaint;
     shapes.add(shape);
     _start = details.localPosition;
   }
@@ -48,21 +38,6 @@ class PointEditor extends Editor {
 class LineEditor extends Editor {
   LineEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
 
-  Paint get _defaultPaint {
-    Paint paint = Paint();
-    paint.color = BASE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    return paint;
-  }
-
-  Paint get _shadowPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
-
   Offset? _start;
   Offset? _end;
   LineShape? _oldShape;
@@ -80,7 +55,6 @@ class LineEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _shadowPaint;
     shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
@@ -89,7 +63,6 @@ class LineEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
-      _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
       shapes.add(_oldShape!);
       shapes.remove(_oldShape!);
@@ -101,39 +74,13 @@ class LineEditor extends Editor {
 class RectangleEditor extends Editor {
   RectangleEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
 
-  Paint get _defaultPaint {
-    Paint paint = Paint();
-    paint.color = RECTANGLE_FILL;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    return paint;
-  }
-
-  Paint get _shadowPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
-
-  Paint get _centerPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
-    return paint;
-  }
-
   Offset? _center;
   Offset? _corner;
   RectangleShape? _oldShape;
-  PointShape? _centerShape;
 
   @override
   void onPanDown(DragDownDetails details) {
     _center = details.localPosition;
-    _centerShape = PointShape(_center!);
-    _centerShape!.paint = _centerPaint;
-    shapes.add(_centerShape!);
   }
 
   @override
@@ -144,7 +91,6 @@ class RectangleEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _shadowPaint;
     shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
@@ -160,33 +106,16 @@ class RectangleEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     _finishDrawing();
     if (_oldShape != null) {
-      _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);
     }
     _oldShape = null;
-    shapes.remove(_centerShape!);
   }
 }
 
 class EllipseEditor extends Editor {
   EllipseEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
-
-  Paint get _defaultPaint {
-    Paint paint = Paint();
-    paint.color = ELLIPSE_FILL;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    return paint;
-  }
-
-  Paint get _shadowPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
 
   Offset? _start;
   Offset? _end;
@@ -205,7 +134,6 @@ class EllipseEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _shadowPaint;
     shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
@@ -214,7 +142,6 @@ class EllipseEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
-      _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);
@@ -225,21 +152,6 @@ class EllipseEditor extends Editor {
 
 class OLineOEditor extends Editor {
   OLineOEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
-
-  Paint get _defaultPaint {
-    Paint paint = Paint();
-    paint.color = ELLIPSE_FILL;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    return paint;
-  }
-
-  Paint get _shadowPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
 
   Offset? _start;
   Offset? _end;
@@ -258,7 +170,6 @@ class OLineOEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _shadowPaint;
     shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
@@ -267,7 +178,6 @@ class OLineOEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
-      _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);
@@ -278,21 +188,6 @@ class OLineOEditor extends Editor {
 
 class CubeEditor extends Editor {
   CubeEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
-
-  Paint get _defaultPaint {
-    Paint paint = Paint();
-    paint.color = ELLIPSE_FILL;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    return paint;
-  }
-
-  Paint get _shadowPaint {
-    Paint paint = Paint();
-    paint.color = SHADOW_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
 
   Offset? _start;
   Offset? _end;
@@ -311,7 +206,6 @@ class CubeEditor extends Editor {
       shapes.remove(_oldShape!);
     }
     _oldShape = shape;
-    shape.paint = _shadowPaint;
     shape.type = ShapeType.shadowed;
     shapes.add(shape);
   }
@@ -320,7 +214,6 @@ class CubeEditor extends Editor {
   void onPanEnd(DragEndDetails details) {
     onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
-      _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
       shapes.remove(_oldShape!);
       shapes.add(_oldShape!);

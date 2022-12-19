@@ -6,18 +6,31 @@ import 'package:path_drawing/path_drawing.dart';
 
 import 'variant_values.dart';
 
-enum ShapeType { shadowed, regular }
+enum ShapeType { shadowed, regular, highlighted }
 
 final dashIntervals = CircularIntervalList<double>([10]);
 
 abstract class Shape {
-  late Paint paint;
   ShapeType type = ShapeType.regular;
 
   void show(Canvas canvas);
 }
 
 class PointShape extends Shape {
+  Paint get _defaultPaint {
+    Paint paint = Paint();
+    paint.color = BASE_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
+    return paint;
+  }
+
+  Paint get _highlightedPaint {
+    Paint paint = Paint();
+    paint.color = HIGHLIGHT_COLOR;
+    paint.strokeWidth = BASE_STROKE_WIDTH + 2;
+    return paint;
+  }
+
   @protected
   final Offset offset;
 
@@ -25,6 +38,18 @@ class PointShape extends Shape {
 
   @override
   void show(Canvas canvas) {
+    Paint paint;
+    switch (type) {
+      case ShapeType.shadowed:
+        paint = _defaultPaint;
+        break;
+      case ShapeType.regular:
+        paint = _defaultPaint;
+        break;
+      case ShapeType.highlighted:
+        paint = _highlightedPaint;
+        break;
+    }
     canvas.drawPoints(PointMode.points, [offset], paint);
   }
 }
@@ -45,20 +70,29 @@ class LineShape extends Shape with LineMixin {
 
 mixin LineMixin on Shape {
   void showLine(Canvas canvas, Offset start, Offset end) {
-    if (type == ShapeType.regular) {
-      Paint newPaint = paint;
-      if (paint.color == Colors.transparent) {
-        newPaint = Paint();
-        newPaint.strokeWidth = paint.strokeWidth;
-        newPaint.color = Colors.black;
-      }
-      canvas.drawLine(start, end, newPaint);
+    Paint defaultPaint = Paint();
+    defaultPaint.color = BASE_COLOR;
+    defaultPaint.strokeWidth = BASE_STROKE_WIDTH;
+    defaultPaint.style = PaintingStyle.stroke;
+
+    Paint shadowedPaint = Paint();
+    shadowedPaint.color = SHADOW_COLOR;
+    shadowedPaint.strokeWidth = BASE_STROKE_WIDTH;
+    shadowedPaint.style = PaintingStyle.stroke;
+
+    Paint highlightedPaint = Paint();
+    highlightedPaint.color = HIGHLIGHT_COLOR;
+    highlightedPaint.strokeWidth = BASE_STROKE_WIDTH;
+    highlightedPaint.style = PaintingStyle.stroke;
+
+    if (type != ShapeType.shadowed) {
+      Paint paint = type == ShapeType.regular ? defaultPaint : highlightedPaint;
+      canvas.drawLine(start, end, paint);
     } else {
       Path path = Path();
       path.moveTo(start.dx, start.dy);
       path.lineTo(end.dx, end.dy);
-      canvas.drawPath(
-          dashPath(path, dashArray: dashIntervals), paint);
+      canvas.drawPath(dashPath(path, dashArray: dashIntervals), shadowedPaint);
     }
   }
 }
@@ -78,15 +112,25 @@ class RectangleShape extends Shape with RectangleMixin {
 }
 
 mixin RectangleMixin on Shape {
-  get _strokePaint {
-    Paint paint = Paint();
-    paint.color = STROKE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
-
   void showRectangle(Canvas canvas, Offset center, Offset corner) {
+    Paint defaultPaint = Paint();
+    defaultPaint.color = RECTANGLE_FILL;
+    defaultPaint.strokeWidth = BASE_STROKE_WIDTH;
+
+    Paint shadowedPaint = Paint();
+    shadowedPaint.color = SHADOW_COLOR;
+    shadowedPaint.strokeWidth = BASE_STROKE_WIDTH;
+    shadowedPaint.style = PaintingStyle.stroke;
+
+    Paint highlightedPaint = Paint();
+    highlightedPaint.color = HIGHLIGHT_COLOR;
+    highlightedPaint.strokeWidth = BASE_STROKE_WIDTH;
+
+    Paint strokePaint = Paint();
+    strokePaint.color = STROKE_COLOR;
+    strokePaint.strokeWidth = BASE_STROKE_WIDTH;
+    strokePaint.style = PaintingStyle.stroke;
+
     double width = (center.dx - corner.dx).abs() * 2;
     double height = (center.dy - corner.dy).abs() * 2;
     Rect rect = Rect.fromCenter(center: center, width: width, height: height);
@@ -94,12 +138,11 @@ mixin RectangleMixin on Shape {
       Path path = Path();
       path.addRect(rect);
       canvas.drawPath(
-          dashPath(path, dashArray: dashIntervals), paint);
+          dashPath(path, dashArray: dashIntervals), shadowedPaint);
     } else {
+      Paint paint = type == ShapeType.regular ? defaultPaint : highlightedPaint;
       canvas.drawRect(rect, paint);
-      if (paint.style != PaintingStyle.stroke) {
-        canvas.drawRect(rect, _strokePaint);
-      }
+      canvas.drawRect(rect, strokePaint);
     }
   }
 }
@@ -119,25 +162,34 @@ class EllipseShape extends Shape with EllipseMixin {
 }
 
 mixin EllipseMixin on Shape {
-  get _strokePaint {
-    Paint paint = Paint();
-    paint.color = STROKE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
-    paint.style = PaintingStyle.stroke;
-    return paint;
-  }
-
   void showEllipse(Canvas canvas, Offset leftUpper, Offset rightLower) {
+    Paint defaultPaint = Paint();
+    defaultPaint.color = ELLIPSE_FILL;
+    defaultPaint.strokeWidth = BASE_STROKE_WIDTH;
+
+    Paint shadowedPaint = Paint();
+    shadowedPaint.color = SHADOW_COLOR;
+    shadowedPaint.strokeWidth = BASE_STROKE_WIDTH;
+    shadowedPaint.style = PaintingStyle.stroke;
+
+    Paint highlightedPaint = Paint();
+    highlightedPaint.color = HIGHLIGHT_COLOR;
+    highlightedPaint.strokeWidth = BASE_STROKE_WIDTH;
+
+    Paint strokePaint = Paint();
+    strokePaint.color = STROKE_COLOR;
+    strokePaint.strokeWidth = BASE_STROKE_WIDTH;
+    strokePaint.style = PaintingStyle.stroke;
+
     Rect rect = Rect.fromPoints(leftUpper, rightLower);
-    if (type == ShapeType.regular) {
+    if (type != ShapeType.shadowed) {
+      Paint paint = type == ShapeType.regular ? defaultPaint : highlightedPaint;
       canvas.drawOval(rect, paint);
-      if (paint.style != PaintingStyle.stroke) {
-        canvas.drawOval(rect, _strokePaint);
-      }
+      canvas.drawOval(rect, strokePaint);
     } else {
       Path path = Path();
       path.addOval(rect);
-      canvas.drawPath(dashPath(path, dashArray: dashIntervals), paint);
+      canvas.drawPath(dashPath(path, dashArray: dashIntervals), shadowedPaint);
     }
   }
 }
@@ -193,11 +245,27 @@ class CubeShape extends Shape with LineMixin, RectangleMixin {
     double dy = end.dy - start.dy;
     double diagonalLength = sqrt(dx * dx + dy * dy);
     double side = diagonalLength / sqrt(3);
-    showRectangle(canvas, Offset(start.dx + side / 2, start.dy + side / 2), start);
-    showRectangle(canvas, Offset(end.dx - side / 2, end.dy - side / 2), end);
+    void _showFrontRect() =>
+        showRectangle(
+            canvas, Offset(start.dx + side / 2, start.dy + side / 2), start);
+    void _showBackRect() =>
+        showRectangle(
+            canvas, Offset(end.dx - side / 2, end.dy - side / 2), end);
+    if (dx <= 0) {
+      _showFrontRect();
+    } else {
+      _showBackRect();
+    }
     showLine(canvas, start, Offset(end.dx - side, end.dy - side));
-    showLine(canvas, Offset(start.dx + side, start.dy), Offset(end.dx, end.dy - side));
-    showLine(canvas, Offset(start.dx, start.dy + side), Offset(end.dx - side, end.dy));
+    showLine(canvas, Offset(start.dx + side, start.dy),
+        Offset(end.dx, end.dy - side));
+    showLine(canvas, Offset(start.dx, start.dy + side),
+        Offset(end.dx - side, end.dy));
     showLine(canvas, Offset(start.dx + side, start.dy + side), end);
+    if (dx <= 0) {
+      _showBackRect();
+    } else {
+      _showFrontRect();
+    }
   }
 }
