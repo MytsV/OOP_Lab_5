@@ -200,5 +200,4 @@ class CubeShape extends Shape with LineMixin, RectangleMixin {
     showLine(canvas, Offset(start.dx, start.dy + side), Offset(end.dx - side, end.dy));
     showLine(canvas, Offset(start.dx + side, start.dy + side), end);
   }
-
 }

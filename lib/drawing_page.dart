@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:oop_lab_2/shape_table.dart';
 
 import 'editors.dart';
 import 'shape_list.dart';
 import 'shape_painter.dart';
 import 'variant_values.dart';
 
-class Instrument {
+class _Tool {
   final String name;
   final String imagePath;
   final Editor editor;
 
-  Instrument(
-      {required this.name, required this.imagePath, required this.editor});
+  _Tool({required this.name, required this.imagePath, required this.editor});
 }
 
 class DrawingPage extends StatefulWidget {
@@ -22,27 +22,50 @@ class DrawingPage extends StatefulWidget {
 }
 
 class _DrawingPageState extends State<DrawingPage> {
-  Editor _currentEditor = PointEditor();
-  final instruments = [
-    Instrument(
-        name: 'Крапка', imagePath: 'assets/dot.png', editor: PointEditor()),
-    Instrument(
-        name: 'Лінія', imagePath: 'assets/line.png', editor: LineEditor()),
-    Instrument(
-        name: 'Прямокутник',
-        imagePath: 'assets/rectangle.png',
-        editor: RectangleEditor()),
-    Instrument(
-        name: 'Еліпс',
-        imagePath: 'assets/ellipse.png',
-        editor: EllipseEditor()),
-    Instrument(
-        name: 'О-лінія-О',
-        imagePath: 'assets/o-line-o.png',
-        editor: OLineOEditor()),
-    Instrument(
-        name: 'Куб', imagePath: 'assets/cube.png', editor: CubeEditor()),
-  ];
+  late Editor _currentEditor;
+  late final List<_Tool> _tools;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentEditor = PointEditor(_onDrawingEnd);
+    _tools = [
+      _Tool(
+          name: 'Крапка',
+          imagePath: 'assets/dot.png',
+          editor: PointEditor(_onDrawingEnd)),
+      _Tool(
+          name: 'Лінія',
+          imagePath: 'assets/line.png',
+          editor: LineEditor(_onDrawingEnd)),
+      _Tool(
+          name: 'Прямокутник',
+          imagePath: 'assets/rectangle.png',
+          editor: RectangleEditor(_onDrawingEnd)),
+      _Tool(
+          name: 'Еліпс',
+          imagePath: 'assets/ellipse.png',
+          editor: EllipseEditor(_onDrawingEnd)),
+      _Tool(
+          name: 'О-лінія-О',
+          imagePath: 'assets/o-line-o.png',
+          editor: OLineOEditor(_onDrawingEnd)),
+      _Tool(
+          name: 'Куб',
+          imagePath: 'assets/cube.png',
+          editor: CubeEditor(_onDrawingEnd)),
+    ];
+  }
+
+  void _onDrawingEnd(Offset start, Offset end) {
+    _Tool tool = _tools.firstWhere(
+        (element) => element.editor.runtimeType == _currentEditor.runtimeType);
+    ShapeTable.getInstance().add(tool.name,
+        x1: start.dx.toInt(),
+        x2: end.dx.toInt(),
+        y1: start.dy.toInt(),
+        y2: end.dy.toInt());
+  }
 
   void _onMenuItemSelected(Editor value) {
     setState(() {
@@ -50,7 +73,7 @@ class _DrawingPageState extends State<DrawingPage> {
     });
   }
 
-  _getButtonChild(Instrument instrument) => Text(instrument.name);
+  _getButtonChild(_Tool tool) => Text(tool.name);
 
   Widget _getMenuChild() {
     return IntrinsicWidth(
@@ -67,8 +90,9 @@ class _DrawingPageState extends State<DrawingPage> {
   Widget _getMenuButton() => PopupMenuButton(
         child: _getMenuChild(),
         itemBuilder: (context) {
-          return instruments
-              .map((e) => PopupMenuItem<Editor>(
+          return _tools
+              .map((e) =>
+              PopupMenuItem<Editor>(
                   value: e.editor, child: _getButtonChild(e)))
               .toList();
         },
@@ -85,17 +109,18 @@ class _DrawingPageState extends State<DrawingPage> {
   }
 
   String _getAppBarText() {
-    Instrument instrument = instruments.firstWhere((element) => element.editor.runtimeType == _currentEditor.runtimeType);
-    return instrument.name;
+    _Tool tool = _tools.firstWhere((element) =>
+    element.editor.runtimeType == _currentEditor.runtimeType);
+    return tool.name;
   }
 
-  Widget _getToolbarButton(Instrument instrument) {
+  Widget _getToolbarButton(_Tool tool) {
     bool isSelected =
-        instrument.editor.runtimeType == _currentEditor.runtimeType;
+        tool.editor.runtimeType == _currentEditor.runtimeType;
     return Tooltip(
-      message: instrument.name,
+      message: tool.name,
       child: GestureDetector(
-          onTap: () => _onMenuItemSelected(instrument.editor),
+          onTap: () => _onMenuItemSelected(tool.editor),
           child: Container(
             width: 40,
             height: 40,
@@ -106,7 +131,7 @@ class _DrawingPageState extends State<DrawingPage> {
             child: Padding(
               padding: const EdgeInsets.all(5),
               child: Image.asset(
-                instrument.imagePath,
+                tool.imagePath,
                 color: isSelected ? Colors.indigo[900] : Colors.white,
                 filterQuality: FilterQuality.medium,
               ),
@@ -119,7 +144,7 @@ class _DrawingPageState extends State<DrawingPage> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(40),
       child:
-          Row(children: instruments.map((e) => _getToolbarButton(e)).toList()),
+      Row(children: _tools.map((e) => _getToolbarButton(e)).toList()),
     );
   }
 

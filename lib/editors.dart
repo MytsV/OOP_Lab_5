@@ -5,44 +5,49 @@ import 'package:oop_lab_2/variant_values.dart';
 import 'shapes.dart';
 
 abstract class Editor {
+  final void Function(Offset, Offset) onDrawingEnd;
+
+  Editor(this.onDrawingEnd);
+
   void onPanDown(DragDownDetails details);
   void onPanUpdate(DragUpdateDetails details);
   void onPanEnd(DragEndDetails details);
 }
 
 class PointEditor extends Editor {
+  PointEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
+
   Paint get _defaultPaint {
     Paint paint = Paint();
     paint.color = BASE_COLOR;
-    paint.strokeWidth = BASE_STROKE_WIDTH;
+    paint.strokeWidth = BASE_STROKE_WIDTH + 1;
     return paint;
   }
 
-  Offset? _lastPosition;
+  Offset? _start;
 
   @override
   void onPanDown(DragDownDetails details) {
     PointShape shape = PointShape(details.localPosition);
     shape.paint = _defaultPaint;
     shapes.add(shape);
-    _lastPosition = details.localPosition;
+    _start = details.localPosition;
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    LineShape shape = LineShape(_lastPosition!, details.localPosition);
-    _lastPosition = details.localPosition;
-    shape.paint = _defaultPaint;
-    shapes.add(shape);
   }
 
   @override
   void onPanEnd(DragEndDetails details) {
-    _lastPosition = null;
+    onDrawingEnd(_start!, _start!);
+    _start = null;
   }
 }
 
 class LineEditor extends Editor {
+  LineEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
+
   Paint get _defaultPaint {
     Paint paint = Paint();
     paint.color = BASE_COLOR;
@@ -58,17 +63,19 @@ class LineEditor extends Editor {
     return paint;
   }
 
-  Offset? _startPosition;
+  Offset? _start;
+  Offset? _end;
   LineShape? _oldShape;
 
   @override
   void onPanDown(DragDownDetails details) {
-    _startPosition = details.localPosition;
+    _start = details.localPosition;
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    LineShape shape = LineShape(_startPosition!, details.localPosition);
+    _end = details.localPosition;
+    LineShape shape = LineShape(_start!, _end!);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -80,6 +87,7 @@ class LineEditor extends Editor {
 
   @override
   void onPanEnd(DragEndDetails details) {
+    onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
@@ -91,6 +99,8 @@ class LineEditor extends Editor {
 }
 
 class RectangleEditor extends Editor {
+  RectangleEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
+
   Paint get _defaultPaint {
     Paint paint = Paint();
     paint.color = RECTANGLE_FILL;
@@ -114,6 +124,7 @@ class RectangleEditor extends Editor {
   }
 
   Offset? _center;
+  Offset? _corner;
   RectangleShape? _oldShape;
   PointShape? _centerShape;
 
@@ -127,7 +138,8 @@ class RectangleEditor extends Editor {
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    RectangleShape shape = RectangleShape(_center!, details.localPosition);
+    _corner = details.localPosition;
+    RectangleShape shape = RectangleShape(_center!, _corner!);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -137,8 +149,16 @@ class RectangleEditor extends Editor {
     shapes.add(shape);
   }
 
+  void _finishDrawing() {
+    double dx = _corner!.dx - _center!.dx;
+    double dy = _corner!.dy - _center!.dy;
+    Offset _oppositeCorner = Offset(_center!.dx - dx, _center!.dy - dy);
+    onDrawingEnd(_oppositeCorner, _corner!);
+  }
+
   @override
   void onPanEnd(DragEndDetails details) {
+    _finishDrawing();
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
@@ -151,6 +171,8 @@ class RectangleEditor extends Editor {
 }
 
 class EllipseEditor extends Editor {
+  EllipseEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
+
   Paint get _defaultPaint {
     Paint paint = Paint();
     paint.color = ELLIPSE_FILL;
@@ -166,17 +188,19 @@ class EllipseEditor extends Editor {
     return paint;
   }
 
-  Offset? _leftUpper;
+  Offset? _start;
+  Offset? _end;
   EllipseShape? _oldShape;
 
   @override
   void onPanDown(DragDownDetails details) {
-    _leftUpper = details.localPosition;
+    _start = details.localPosition;
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    EllipseShape shape = EllipseShape(_leftUpper!, details.localPosition);
+    _end = details.localPosition;
+    EllipseShape shape = EllipseShape(_start!, _end!);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -188,6 +212,7 @@ class EllipseEditor extends Editor {
 
   @override
   void onPanEnd(DragEndDetails details) {
+    onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
@@ -199,6 +224,8 @@ class EllipseEditor extends Editor {
 }
 
 class OLineOEditor extends Editor {
+  OLineOEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
+
   Paint get _defaultPaint {
     Paint paint = Paint();
     paint.color = ELLIPSE_FILL;
@@ -214,17 +241,19 @@ class OLineOEditor extends Editor {
     return paint;
   }
 
-  Offset? _startPosition;
+  Offset? _start;
+  Offset? _end;
   OLineOShape? _oldShape;
 
   @override
   void onPanDown(DragDownDetails details) {
-    _startPosition = details.localPosition;
+    _start = details.localPosition;
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    OLineOShape shape = OLineOShape(_startPosition!, details.localPosition);
+    _end = details.localPosition;
+    OLineOShape shape = OLineOShape(_start!, _end!);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -236,6 +265,7 @@ class OLineOEditor extends Editor {
   
   @override
   void onPanEnd(DragEndDetails details) {
+    onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
@@ -247,6 +277,8 @@ class OLineOEditor extends Editor {
 }
 
 class CubeEditor extends Editor {
+  CubeEditor(void Function(Offset, Offset) onDrawingEnd) : super(onDrawingEnd);
+
   Paint get _defaultPaint {
     Paint paint = Paint();
     paint.color = ELLIPSE_FILL;
@@ -262,17 +294,19 @@ class CubeEditor extends Editor {
     return paint;
   }
 
-  Offset? _startPosition;
+  Offset? _start;
+  Offset? _end;
   CubeShape? _oldShape;
 
   @override
   void onPanDown(DragDownDetails details) {
-    _startPosition = details.localPosition;
+    _start = details.localPosition;
   }
 
   @override
   void onPanUpdate(DragUpdateDetails details) {
-    CubeShape shape = CubeShape(_startPosition!, details.localPosition);
+    _end = details.localPosition;
+    CubeShape shape = CubeShape(_start!, _end!);
     if (_oldShape != null) {
       shapes.remove(_oldShape!);
     }
@@ -284,6 +318,7 @@ class CubeEditor extends Editor {
 
   @override
   void onPanEnd(DragEndDetails details) {
+    onDrawingEnd(_start!, _end!);
     if (_oldShape != null) {
       _oldShape!.paint = _defaultPaint;
       _oldShape!.type = ShapeType.regular;
